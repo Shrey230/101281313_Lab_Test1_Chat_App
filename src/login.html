@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COMP3133 Lab Test 1</title>
+</head>
+<style>
+form {
+        margin: auto;
+        text-align: center;
+        display: inline-block;
+        background: #f3f3f3;
+        border: 1px solid #ddd;
+        border-radius: 2px;
+        padding: 2rem;
+        margin: 2rem 0 1rem 0
+}
+
+form label {
+    float: left;
+    font-size: .9rem;
+    margin: 0;
+    padding: 0
+}
+
+.right-label {
+    float: right;
+    cursor: pointer
+}
+
+input {
+    width: 15rem;
+    padding: .3rem;
+    border-radius: 10px;
+    outline: none;
+    border: none
+}
+
+div
+{ 
+        padding-right: 50px;
+        background-color:lightblue;
+        width: 32%;
+        border: 15px ;
+        padding: 10px;
+        margin: auto;
+}
+
+.sub_btn {
+    display: block;
+    width: 100%;
+    padding: .3rem;
+    border: none;
+    background: #222;
+    color: #fff;
+    border-radius: 3px;
+}
+
+#sub_btn:hover {
+    background: #333;
+    transition: all .5s
+}
+</style>   
+<body>
+    <div>
+        <form action="http://localhost:3000/login" method="post">
+            <p>
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required><br><br>
+            </p>
+            <p>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required><br><br>
+            </p>
+            <input class = "sub_btn" type="submit" value="Submit">
+        </form>
+    </div>
+</body>
+</html>

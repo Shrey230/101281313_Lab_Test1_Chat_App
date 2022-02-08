@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COMP3133 Lab Test 1</title>
+</head>
+<style>
+    div
+{
+        padding-right: 50px;
+        background-color:lightblue;
+        width: 70%;
+        border: 20px ;
+        padding: 10px;
+        margin: auto;
+}
+    .header {
+      background-color: #f4e04d;
+      min-height: 10vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: calc(10px + 2vmin);
+      color: #10375c;
+}
+    .messageBox{
+        padding: 1px;
+        background-color: lightblue;
+        height:100%; 
+        width:100%; 
+        border: 20px solid black;
+        overflow: auto;
+    }
+    .sub_btn {
+    display: block;
+    width: 10%;
+    padding: 0.2rem;
+    border: none;
+    background:green;
+    color: #fff;
+    border-radius: 3px;
+}
+.button {
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        }
+.logout{
+    background-color:grey;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+
+}
+    
+</style>
+<body>
+<div>
+        <input id="username" type="hidden" name="username" value="">
+
+        <h1 class = "header">Wellcome to the chat App</h1>
+        <div id="messageBox">
+
+        </div>
+        <p id="typing" style="visibility: hidden;">User is typing...</p>
+
+        <input id="msg" type="text" name="msg" value="" placeholder="Enter message here..." 
+            onkeypress="typing(true)" onchange="typing(false)" 
+            style="width:400px;">
+        <br/><br/>
+        <button class = "sub_btn" type="button" name="sendMsgButton" onclick="sendMsg()">
+            Send
+        </button>
+
+        <br/><br/>
+        <flex>
+                <select name="room" id="room">
+                    <option value="news">News</option>
+                    <option value="covid19">COVID19</option>
+                    <option value="nodejs">NodeJS</option>
+                </select>
+            <button  class = "button" type = "button" name = "joinRoomButton" onclick = "joinRoom()">
+                Join Room
+            </button>
+
+            <button class = "button" type = "button" name = "leaveRoomButton" onclick = "leaveRoom()">
+                Leave Room
+            </button>
+            
+            <br/><br/>
+
+            <button class = "logout" type="button" name="logoutButton" onclick="logout()">
+                Logout
+            </button>
+        </flex>
+    </div>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            const client = io()
+
+            var cookieArray = document.cookie.split('=')
+            document.getElementById('username').value = cookieArray[1]
+
+            client.on('newMsg', (newMessage) => {
+                printMsg(newMessage)
+            })
+
+            function joinRoom () {
+                var currentUser = document.getElementById('username').value
+                var currentRoom = document.getElementById('room').value
+
+                tempData = {
+                    room: currentRoom,
+                    username: currentUser
+                }
+
+                client.emit('joinRoom', tempData)
+                printMsg(`${currentUser} has joined room: ${currentRoom}.`)
+            }
+
+            function leaveRoom () {
+                var currentUser = document.getElementById('username').value
+                var currentRoom = document.getElementById('room').value
+
+                tempData = {
+                    room: currentRoom,
+                    username: currentUser
+                }
+
+                client.emit('leaveRoom', tempData)
+                printMsg(`${currentUser} has left room: ${currentRoom}.`)
+            }
+
+            function sendMsg() {
+                var currentUser = document.getElementById('username').value
+                var currentMsg = document.getElementById('msg').value
+                var currentRoom = document.getElementById('room').value
+                
+                tempMsg = {
+                    username: currentUser,
+                    room: currentRoom,
+                    message: currentMsg
+                }
+                
+                client.emit('sendMsg', tempMsg)
+                printMsg(`${new Date().toLocaleTimeString()} - ${currentUser}: ${currentMsg}`)
+                document.getElementById('msg').value = ""
+            }
+
+            function printMsg (newMessage) {
+                document.getElementById('messageBox').innerHTML += '<div>' + newMessage + '</div>'
+            }
+
+            function logout() {
+                document.cookie = "username=;"
+                window.location.replace("http://localhost:3000");
+            }
+
+            client.on('getTyping', (status) => {
+                if (status == true) {
+                    document.getElementById('typing').style.visibility = "visible"
+                } else {
+                    document.getElementById('typing').style.visibility = "hidden"
+                }
+            }) 
+
+            function typing (typingStatus) {
+                var currentRoom = document.getElementById('room').value
+                client.emit('typing', {room: currentRoom, status: typingStatus})
+            }
+
+    </script>
+</body>
+</html>
